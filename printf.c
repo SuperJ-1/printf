@@ -1,48 +1,51 @@
 #include "main.h"
+#include <stdarg.h>
+#include <unistd.h>
 
 /**
- * _printf - prints a stirng according to format and given specifier
- * @format: string
- * Return: string
+ * _printf - A simplified version of the printf function
+ * @format: The format string to print
+ *
+ * writes the  format to the standard output (stdout).
+ * Return: The number of characters printed.
  */
+
 int _printf(const char *format, ...)
 {
-va_list arg_list;
-int printed_chars = 0;
+	va_list args;
+	int count = 0;
 
-va_start(arg_list, format);
-while (*format != '\0')
-{
-if (*format == '%')
-{
-format++;
-switch (*format)
-{
-case 'c':
-prnt_c(va_arg(arg_list, int));
-printed_chars++;
-break;
-case 's':
-printed_chars += prnt_s(va_arg(arg_list, char*));
-break;
-case 'd':
-case 'i':
-printed_chars += prnt_i(va_arg(arg_list, int));
-printed_chars++;
-break;
-default:
-_putchar(*format);
-printed_chars++;
-break;
-}
-}
-else
-{
-_putchar(*format);
-printed_chars++;
-}
-format++;
-}
-va_end(arg_list);
-return (printed_chars);
+	va_start(args, format);
+	while (*format)
+	{
+		if (*format == '%')
+		{
+			format++;
+			if (*format == 's')
+			{
+				char *s = va_arg(args, char *);
+
+				while (*s)
+				{
+					write(1, s++, 1);
+					count++;
+				}
+			}
+			else if (*format == 'c')
+			{
+				char c = (char)va_arg(args, int);
+
+				write(1, &c, 1);
+				count++;
+			}
+		}
+		else
+		{
+			write(1, format, 1);
+			count++;
+		}
+		format++;
+	}
+	va_end(args);
+	return (count);
 }
